@@ -1,54 +1,55 @@
 package com.tejas;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.tejas.Exceptions.InvalidCurrencyCodeException;
-import com.tejas.Exceptions.InvalidRequestException;
+import com.tejas.Endpoints.CurrencyController;
 import com.tejas.Model.CurrencyEntity;
-import com.tejas.Service.CurrencyServiceImpl;
+import com.tejas.Service.ICurrencyService;
 
-@SpringBootTest
-class CurrencyServiceTests {
+@ExtendWith(MockitoExtension.class)
+public class CurrencyProviderServiceApplicationTests {
 
-	@Autowired
-	CurrencyServiceImpl service;
+	@InjectMocks
+	private CurrencyController controller;
+
+	@Mock
+	private ICurrencyService service;
+
+	CurrencyEntity currency = new CurrencyEntity(100, "INR", "IND", "INDIAN RUPEE", "INT");
+	
+	List<CurrencyEntity> currencies = new ArrayList<>(); 
+	
 
 	@Test
-	void testCurrency() {
-		CurrencyEntity currency = service.getCurrency("INR");
-		assertEquals(100l, currency.getCurrId());
+	public void retrieveDetailsForCurrency() throws Exception {
+
+		Mockito.when(service.getCurrency(Mockito.anyString())).thenReturn(currency);
+
+		CurrencyEntity curr = controller.fetchCurrDetails("INR");
+
+		assertEquals(currency, curr);
+
 	}
 	
 	@Test
-	void testNullCurrency() {
-		assertThrows(InvalidRequestException.class, () -> service.getCurrency(""));
-	}
-	
-	@Test
-	void testInvalidCurrency() {
-		assertThrows(InvalidCurrencyCodeException.class, () -> service.getCurrency("IND"));
-	}
+	public void retrieveAllCurrency() throws Exception {
+		currencies.add(currency);
+		
+		Mockito.when(service.getCurrencies()).thenReturn(currencies);
 
-	@Test
-	void testCurrencyNotNull() {
-		CurrencyEntity currency = service.getCurrency("USD");
-		assertNotNull(currency);
-	}
+		List curr = controller.fetchAllCurrDetails();
 
-	@Test
-	void testCurrencylenth() {
-		assertThrows(InvalidRequestException.class, () -> service.getCurrency(""));
-	}
-	
-	@Test
-	void testCurrencylenth2() {
-		assertThrows(InvalidRequestException.class, () -> service.getCurrency("IN"));
+		assertEquals(3, curr.size());
+
 	}
 }

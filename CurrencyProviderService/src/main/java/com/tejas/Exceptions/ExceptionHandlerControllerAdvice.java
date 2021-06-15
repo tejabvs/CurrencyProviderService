@@ -12,12 +12,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-@Component
 public class ExceptionHandlerControllerAdvice {
 
 	@ExceptionHandler(InvalidCurrencyCodeException.class)
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
-	public @ResponseBody ResponseMode1 handleResourceNotFound(final InvalidCurrencyCodeException exception,
+	public @ResponseBody ResponseMode1 handleResourceNotFound(InvalidCurrencyCodeException exception,
 			final HttpServletRequest request) {
 
 		ResponseMode1 error = new ResponseMode1(new Date(), exception.getMessage(), 404);
@@ -25,6 +24,17 @@ public class ExceptionHandlerControllerAdvice {
 		return error;
 	}
 
+	
+	@ExceptionHandler(InvalidRequestException.class)
+	@ResponseStatus(value=HttpStatus.BAD_REQUEST)
+	public @ResponseBody ResponseMode1 handleBadRequest(InvalidRequestException exception,
+			final HttpServletRequest request) {
+
+		ResponseMode1 error = new ResponseMode1(new Date(), exception.getMessage(), 400);
+
+		return error;
+	}
+	
 	@ExceptionHandler(Exception.class)
 	@ResponseStatus(value = HttpStatus.INTERNAL_SERVER_ERROR)
 	public @ResponseBody ResponseMode1 handleException(final Exception exception, final HttpServletRequest request) {

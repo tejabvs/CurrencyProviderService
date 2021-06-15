@@ -14,6 +14,18 @@ public class ResponseMode1 {
 		this.desc = desc;
 		this.statusCode = statusCode;
 	}
+
+	public Date getDate() {
+		return date;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public int getStatusCode() {
+		return statusCode;
+	}
 	
 	
 }
